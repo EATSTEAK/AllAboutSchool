@@ -1,6 +1,3 @@
 package me.itstake.allaboutschool.data.feed
 
-interface FeedData {
-    val title:String
-    val details:String
-}
+class FeedData(val title:String, val details: String)

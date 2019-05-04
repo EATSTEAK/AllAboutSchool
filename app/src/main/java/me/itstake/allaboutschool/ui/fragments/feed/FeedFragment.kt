@@ -6,12 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.SimpleItemAnimator
 import com.google.android.material.appbar.AppBarLayout
 import kotlinx.android.synthetic.main.feed_fragment.*
 import me.itstake.allaboutschool.R
-import me.itstake.allaboutschool.data.feed.DefaultFeedData
+import me.itstake.allaboutschool.data.feed.FeedData
 import me.itstake.allaboutschool.ui.adapters.FeedAdapter
 
 
@@ -38,7 +36,7 @@ class FeedFragment : Fragment() {
             layoutManager = LinearLayoutManager(activity)
 
             // specify an viewAdapter (see also next example)
-            adapter = FeedAdapter(arrayOf(DefaultFeedData("Hello", "World!")))
+            adapter = FeedAdapter(arrayOf(FeedData("Hello", "World!")))
 
         }
         appbar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
