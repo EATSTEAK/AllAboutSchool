@@ -1,5 +1,6 @@
 package me.itstake.allaboutschool
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -11,7 +12,9 @@ import me.itstake.allaboutschool.ui.fragments.timetable.TimeTableFragment
 import me.itstake.allaboutschool.ui.fragments.todo.ToDoFragment
 
 class MainActivity : AppCompatActivity() {
-
+    companion object {
+        var CONTEXT:Context? = null
+    }
     private val navListener = BottomNavigationView.OnNavigationItemSelectedListener { t ->
         when(t.itemId) {
             R.id.action_feed -> {
@@ -50,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CONTEXT = applicationContext
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()

@@ -27,5 +27,6 @@
             app:itemIconTint="@drawable/nav_colors"
             app:itemTextColor="@drawable/nav_colors"
             app:menu="@menu/nav_menu"
-            app:labelVisibilityMode="labeled"/>
+            app:labelVisibilityMode="labeled"
+            app:layout_behavior="@string/hide_bottom_view_on_scroll_behavior"/>
 </FrameLayout>
