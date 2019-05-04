@@ -1,8 +1,9 @@
 package me.itstake.allaboutschool
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.main_activity.*
 import me.itstake.allaboutschool.ui.fragments.feed.FeedFragment
@@ -12,9 +13,9 @@ import me.itstake.allaboutschool.ui.fragments.timetable.TimeTableFragment
 import me.itstake.allaboutschool.ui.fragments.todo.ToDoFragment
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        var CONTEXT:Context? = null
-    }
+
+    private lateinit var model: SharedViewModel
+
     private val navListener = BottomNavigationView.OnNavigationItemSelectedListener { t ->
         when(t.itemId) {
             R.id.action_feed -> {
@@ -53,7 +54,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        CONTEXT = applicationContext
+        model = ViewModelProviders.of(this).get(SharedViewModel::class.java)
         setContentView(R.layout.main_activity)
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -62,6 +63,15 @@ class MainActivity : AppCompatActivity() {
             nav.selectedItemId = R.id.action_time_table
         }
         nav.setOnNavigationItemSelectedListener(navListener)
+        model.bottomNavIsShow.observe(this, Observer<Boolean> { b ->
+            if(b) {
+                nav.clearAnimation()
+                nav.animate().translationY(nav.height.toFloat()).duration = 200
+            } else {
+                nav.clearAnimation()
+                nav.animate().translationY(0f).duration = 200
+            }
+        })
     }
 
 }
