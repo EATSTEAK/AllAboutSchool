@@ -1,18 +1,22 @@
 package me.itstake.allaboutschool.data.settings
 
-import android.content.res.Resources
-import me.itstake.allaboutschool.MainActivity
+import me.itstake.allaboutschool.R
+import me.itstake.allaboutschool.ui.fragments.settings.data.ColorSettingData
+import me.itstake.allaboutschool.ui.fragments.settings.data.SchoolFindSettingData
+import me.itstake.allaboutschool.ui.fragments.settings.data.SelectionSettingData
+import me.itstake.allaboutschool.ui.fragments.settings.data.SettingData
 import kotlin.reflect.KClass
 
-enum class SettingEnums(val key:String, val type:KClass<*>, val showUI:Boolean, val defaultValue: Any) {
+enum class SettingEnums(val key:String, val type:KClass<*>, val dataType:KClass<out SettingData<*>>?, val showUI:Boolean, val defaultValue: Any, val iconId: Int?, val localizedTitle: Int?, val localizedDetails: Int?, val selectionList: Array<Int>?) {
 
-    GENERAL_PRIMARY_COLOR("general.primary_color", String::class, true, "#3F51B5"),
-    GENERAL_SECONDARY_COLOR("general.accent_color", String::class, true, "#FF4081"),
-    GENERAL_THEME("general.theme", Int::class, true, 0),
-    GENERAL_DEFAULT_FRAGMENT("general.default_fragment", Int::class, true, 0),
-    GENERAL_WELCOME_MANAGER("general.welcome_manager", Boolean::class, false, false),
-    GENERAL_SCHOOL_CODE("general.school_code", String::class, true, ""),
-
+    NAVIGATION("navigation", Any::class,null,false, 0, null, null, null, null),
+    GENERAL_PRIMARY_COLOR("general.primary_color", String::class, ColorSettingData::class, true, "#3F51B5", null, R.string.settings_general_primary_color_title, null, null),
+    GENERAL_SECONDARY_COLOR("general.accent_color", String::class, ColorSettingData::class, true, "#FF4081", null, R.string.settings_general_secondary_color_title, null, null),
+    GENERAL_THEME("general.theme", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_theme_title, null, arrayOf(R.string.settings_general_theme_title)),
+    GENERAL_DEFAULT_FRAGMENT("general.default_fragment", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_default_fragment_title, null, arrayOf(R.string.settings_general_default_fragment_title)),
+    GENERAL_WELCOME_MANAGER("general.welcome_manager", Boolean::class, null, false, false, null, null, null, null),
+    GENERAL_SCHOOL_CODE("general.school_code", String::class, SchoolFindSettingData::class, true, "", null, R.string.settings_general_school_code_title, null, null),
+    /*
     FEED_CLOCK("feed.clock", Boolean::class, true, true),
     FEED_CLOCK_24HRS("feed.clock_24hrs", Boolean::class, true, false),
     FEED_DATE("feed.date", Boolean::class, true, true),
@@ -32,5 +36,5 @@ enum class SettingEnums(val key:String, val type:KClass<*>, val showUI:Boolean, 
     TO_DO_MAIN_LIST("to_do.main_list", Int::class, true, 0),
 
     MEALS_ALLERGY_WARNING("meals.allergy_warning", Boolean::class, true, true),
-
+    */
 }

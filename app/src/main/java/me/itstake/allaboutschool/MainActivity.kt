@@ -4,19 +4,17 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI.setupWithNavController
 import kotlinx.android.synthetic.main.main_activity.*
-import me.itstake.allaboutschool.ui.fragments.feed.FeedFragment
-import me.itstake.allaboutschool.ui.fragments.meals.MealsFragment
-import me.itstake.allaboutschool.ui.fragments.settings.SettingsFragment
-import me.itstake.allaboutschool.ui.fragments.timetable.TimeTableFragment
-import me.itstake.allaboutschool.ui.fragments.todo.ToDoFragment
+import me.itstake.allaboutschool.data.settings.SettingEnums
+import me.itstake.allaboutschool.data.settings.SettingsManager
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var navHost:NavHostFragment
     private lateinit var model: SharedViewModel
-
-    private val navListener = BottomNavigationView.OnNavigationItemSelectedListener { t ->
+    /*private val navListener = BottomNavigationView.OnNavigationItemSelectedListener { t ->
         when(t.itemId) {
             R.id.action_feed -> {
                 supportFragmentManager.beginTransaction()
@@ -50,19 +48,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
         false
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         model = ViewModelProviders.of(this).get(SharedViewModel::class.java)
-        setContentView(R.layout.main_activity)
-        if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_container, TimeTableFragment.newInstance())
-                    .commitNow()
-            nav.selectedItemId = R.id.action_time_table
-        }
-        nav.setOnNavigationItemSelectedListener(navListener)
         model.bottomNavIsShow.observe(this, Observer<Boolean> { b ->
             if(b) {
                 nav.clearAnimation()
@@ -72,6 +62,21 @@ class MainActivity : AppCompatActivity() {
                 nav.animate().translationY(0f).duration = 200
             }
         })
+        setContentView(R.layout.main_activity)
+        navHost = main_nav_host_fragment as NavHostFragment
+        val graph = navHost.navController.navInflater.inflate(R.navigation.main_nav_graph)
+        val settingsManager = SettingsManager(applicationContext)
+        graph.startDestination = when(settingsManager.getSettings(SettingEnums.GENERAL_DEFAULT_FRAGMENT)) {
+            1 -> R.id.action_time_table
+            2 -> R.id.action_todo
+            3 -> R.id.action_meals
+            else -> R.id.action_feed
+        }
+        navHost.navController.graph = graph
+        setupWithNavController(nav, navHost.navController)
+
+        //nav.setOnNavigationItemSelectedListener(navListener)
+
     }
 
 }
