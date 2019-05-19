@@ -16,4 +16,7 @@
     <string name="settings_general_theme_title">테마</string>
     <string name="settings_general_default_fragment_title">기본 화면</string>
     <string name="settings_general_school_code_title">학교</string>
+    <string name="theme_light">밝은 테마</string>
+    <string name="theme_dark">어두운 테마</string>
+    <string name="applies_restart">재시작 후 적용됩니다.</string>ㄴ
 </resources>

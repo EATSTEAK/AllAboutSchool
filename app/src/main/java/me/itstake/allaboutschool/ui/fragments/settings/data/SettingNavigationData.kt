@@ -22,7 +22,6 @@ class SettingNavigationData(override val settingEnum: SettingEnums, override var
         view.findViewById<Switch>(R.id.setting_entry_switch).visibility = View.GONE
         if(iconId != null) view.findViewById<ImageView>(R.id.setting_entry_icon).setImageResource(iconId) else view.findViewById<ImageView>(R.id.setting_entry_icon).visibility = View.GONE
         view.setOnClickListener {
-            println(it.findNavController().currentDestination?.label)
             if(settingValue != 0) it.findNavController().navigate(SettingsFragmentDirections.actionActionSettingsToSettingsLv1(settingValue)) else it.findNavController().navigateUp()
         }
     }

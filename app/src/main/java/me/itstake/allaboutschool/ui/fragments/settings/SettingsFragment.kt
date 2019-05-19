@@ -1,11 +1,15 @@
 package me.itstake.allaboutschool.ui.fragments.settings
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.settings_fragment.*
@@ -37,11 +41,28 @@ class SettingsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         val settingsManager = SettingsManager(activity?.applicationContext)
         val settingEntries = ArrayList<SettingData<out Any>>()
+        settings_toolbar.setBackgroundColor(Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String))
+        (activity as AppCompatActivity).setSupportActionBar(settings_toolbar)
+        viewModel.primaryColor.observe(this, Observer<String>{
+            settings_toolbar.setBackgroundColor(Color.parseColor(it))
+        })
+        settings_toolbar.setNavigationOnClickListener {
+            it.findNavController().navigateUp()
+        }
         if(args.settingsType == SettingData.SettingPage.MAIN.key) {
+            (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+            (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
             settingEntries.add(SettingNavigationData(SettingEnums.NAVIGATION, 1, R.drawable.ic_settings_grey600_24dp, getString(R.string.settings_general_title), getString(R.string.settings_general_details)))
         } else {
+            val page = SettingData.SettingPage.getByKey(args.settingsType)
+            settings_toolbar.setTitle(when(page) {
+                SettingData.SettingPage.GENERAL -> R.string.settings_general_title
+                else -> R.string.frag_settings
+            })
+            (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(true)
             SettingEnums.values().forEach {
-                if(it.name.startsWith(SettingData.SettingPage.getByKey(args.settingsType).name) && it.showUI) {
+                if(it.name.startsWith(page.name) && it.showUI) {
                     val localizedTitle = if(it.localizedTitle == null) "" else getString(it.localizedTitle)
                     val localizedDetails = if(it.localizedDetails == null) "" else getString(it.localizedDetails)
                     val data = when(it.dataType) {
@@ -54,6 +75,7 @@ class SettingsFragment : Fragment() {
                     if(data != null) settingEntries.add(data)
                 }
             }
+
         }
         settings_recycler.apply {
             setHasFixedSize(true)

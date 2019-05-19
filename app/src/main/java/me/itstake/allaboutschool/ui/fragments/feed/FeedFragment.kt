@@ -1,11 +1,14 @@
 package me.itstake.allaboutschool.ui.fragments.feed
 
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.feed_fragment.*
@@ -45,7 +48,13 @@ class FeedFragment : Fragment() {
             adapter = FeedAdapter(arrayOf(FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!")))
 
         }
+        model.primaryColor.observe(this, Observer<String>{
+            feed_collapsing_toolbar.setBackgroundColor(Color.parseColor(it))
+            feed_collapsing_toolbar.setContentScrimColor(Color.parseColor(it))
+        })
         feed_recycler.addOnScrollListener(HideBottomNavOnScrollListener(model))
+        (activity as AppCompatActivity).setSupportActionBar(feed_toolbar)
+        (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
         super.onActivityCreated(savedInstanceState)
         // TODO: Use the ViewModel

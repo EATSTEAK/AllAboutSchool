@@ -7,13 +7,13 @@ import me.itstake.allaboutschool.ui.fragments.settings.data.SelectionSettingData
 import me.itstake.allaboutschool.ui.fragments.settings.data.SettingData
 import kotlin.reflect.KClass
 
-enum class SettingEnums(val key:String, val type:KClass<*>, val dataType:KClass<out SettingData<*>>?, val showUI:Boolean, val defaultValue: Any, val iconId: Int?, val localizedTitle: Int?, val localizedDetails: Int?, val selectionList: Array<Int>?) {
+enum class SettingEnums(val key:String, val type:KClass<*>, val dataType:KClass<out SettingData<*>>?, val showUI:Boolean, val defaultValue: Any, val iconId: Int?, val localizedTitle: Int?, val localizedDetails: Int?, val selectionList: Int?) {
 
     NAVIGATION("navigation", Any::class,null,false, 0, null, null, null, null),
     GENERAL_PRIMARY_COLOR("general.primary_color", String::class, ColorSettingData::class, true, "#3F51B5", null, R.string.settings_general_primary_color_title, null, null),
     GENERAL_SECONDARY_COLOR("general.accent_color", String::class, ColorSettingData::class, true, "#FF4081", null, R.string.settings_general_secondary_color_title, null, null),
-    GENERAL_THEME("general.theme", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_theme_title, null, arrayOf(R.string.settings_general_theme_title)),
-    GENERAL_DEFAULT_FRAGMENT("general.default_fragment", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_default_fragment_title, null, arrayOf(R.string.settings_general_default_fragment_title)),
+    GENERAL_THEME("general.theme", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_theme_title, null, R.array.themes),
+    GENERAL_DEFAULT_FRAGMENT("general.default_fragment", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_default_fragment_title, null, R.array.fragment_options),
     GENERAL_WELCOME_MANAGER("general.welcome_manager", Boolean::class, null, false, false, null, null, null, null),
     GENERAL_SCHOOL_CODE("general.school_code", String::class, SchoolFindSettingData::class, true, "", null, R.string.settings_general_school_code_title, null, null),
     /*
