@@ -1,6 +1,9 @@
 package me.itstake.allaboutschool.ui.fragments.settings
 
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,12 +29,12 @@ class SettingsFragment : Fragment() {
         fun newInstance() = SettingsFragment()
     }
 
-    private lateinit var viewModel: SharedViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     val args: SettingsFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        viewModel = activity?.run {
+        sharedViewModel = activity?.run {
             ViewModelProviders.of(this).get(SharedViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
         return inflater.inflate(R.layout.settings_fragment, container, false)
@@ -41,14 +44,25 @@ class SettingsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         val settingsManager = SettingsManager(activity?.applicationContext)
         val settingEntries = ArrayList<SettingData<out Any>>()
+
+        //toolbar custom color
         settings_toolbar.setBackgroundColor(Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String))
         (activity as AppCompatActivity).setSupportActionBar(settings_toolbar)
-        viewModel.primaryColor.observe(this, Observer<String>{
-            settings_toolbar.setBackgroundColor(Color.parseColor(it))
+        sharedViewModel.primaryColor.observe(this, Observer<String>{
+            val color = Color.parseColor(it)
+            val colorAni = ValueAnimator.ofObject(ArgbEvaluator(), (settings_toolbar.background as ColorDrawable).color, color)
+            colorAni.duration = 250
+            colorAni.addUpdateListener {ani ->
+                settings_toolbar.setBackgroundColor(ani.animatedValue as Int)
+            }
+            colorAni.start()
         })
+
+        //nav backbutton operation
         settings_toolbar.setNavigationOnClickListener {
             it.findNavController().navigateUp()
         }
+        //Detect page level via navArgs
         if(args.settingsType == SettingData.SettingPage.MAIN.key) {
             (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
             (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
@@ -77,6 +91,8 @@ class SettingsFragment : Fragment() {
             }
 
         }
+
+        //recycler init
         settings_recycler.apply {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(activity)

@@ -1,7 +1,10 @@
 package me.itstake.allaboutschool.ui.fragments.feed
 
 
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,20 +18,22 @@ import kotlinx.android.synthetic.main.feed_fragment.*
 import me.itstake.allaboutschool.R
 import me.itstake.allaboutschool.SharedViewModel
 import me.itstake.allaboutschool.data.feed.FeedData
+import me.itstake.allaboutschool.data.settings.SettingEnums
+import me.itstake.allaboutschool.data.settings.SettingsManager
 import me.itstake.allaboutschool.ui.adapters.FeedAdapter
 import me.itstake.allaboutschool.ui.listeners.HideBottomNavOnScrollListener
 
 
 class FeedFragment : Fragment() {
 
-    private lateinit var model: SharedViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     companion object {
         fun newInstance() = FeedFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        model = activity?.run {
+        sharedViewModel = activity?.run {
             ViewModelProviders.of(this).get(SharedViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
         return inflater.inflate(R.layout.feed_fragment, container, false)
@@ -36,28 +41,33 @@ class FeedFragment : Fragment() {
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
+        val settingsManager = SettingsManager(activity?.applicationContext)
+        //Recycler Init
         feed_recycler.apply {
-            // use this setting to improve performance if you know that changes
-            // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
-
-            // use a linear layout manager
             layoutManager = LinearLayoutManager(activity)
-
-            // specify an viewAdapter (see also next example)
             adapter = FeedAdapter(arrayOf(FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!"), FeedData("Hello", "World!")))
-
         }
-        model.primaryColor.observe(this, Observer<String>{
-            feed_collapsing_toolbar.setBackgroundColor(Color.parseColor(it))
-            feed_collapsing_toolbar.setContentScrimColor(Color.parseColor(it))
+        feed_recycler.addOnScrollListener(HideBottomNavOnScrollListener(sharedViewModel))
+
+        // Custom Color
+        feed_collapsing_toolbar.setBackgroundColor(Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String))
+        sharedViewModel.primaryColor.observe(this, Observer<String>{
+            val color = Color.parseColor(it)
+            val colorAni = ValueAnimator.ofObject(ArgbEvaluator(), (feed_collapsing_toolbar.background as ColorDrawable).color, color)
+            colorAni.duration = 250
+            colorAni.addUpdateListener {ani ->
+                feed_collapsing_toolbar.setBackgroundColor(ani.animatedValue as Int)
+                feed_collapsing_toolbar.setContentScrimColor(ani.animatedValue as Int)
+            }
+            colorAni.start()
         })
-        feed_recycler.addOnScrollListener(HideBottomNavOnScrollListener(model))
+
+        //Bind ActionBar
         (activity as AppCompatActivity).setSupportActionBar(feed_toolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
         super.onActivityCreated(savedInstanceState)
-        // TODO: Use the ViewModel
     }
 
 }

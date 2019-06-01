@@ -12,7 +12,7 @@ class SchoolFindSettingData(override val settingEnum: SettingEnums, override var
         view.findViewById<TextView>(R.id.setting_entry_title).text = localizedTitle
         if(localizedDetails == "") view.findViewById<TextView>(R.id.setting_entry_details).visibility = View.GONE else view.findViewById<TextView>(R.id.setting_entry_details).text = localizedDetails
         if(iconId != null) view.findViewById<ImageView>(R.id.setting_entry_icon).setImageResource(iconId) else view.findViewById<ImageView>(R.id.setting_entry_icon).visibility = View.GONE
-        view.setOnClickListener { v ->
+        view.setOnClickListener {
             println("Clicked")
         }
     }

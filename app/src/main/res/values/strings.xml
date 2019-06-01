@@ -18,5 +18,9 @@
     <string name="settings_general_school_code_title">학교</string>
     <string name="theme_light">밝은 테마</string>
     <string name="theme_dark">어두운 테마</string>
-    <string name="applies_restart">재시작 후 적용됩니다.</string>ㄴ
+    <string name="applies_restart">재시작 후 적용됩니다.</string>
+    <string name="select_color">색상 선택</string>
+    <string name="advanced">고급</string>
+    <string name="presets">프리셋</string>
+    <string name="select">선택</string>ㄴ
 </resources>

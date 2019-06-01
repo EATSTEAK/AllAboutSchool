@@ -23,7 +23,8 @@ class ColorSettingData(override val settingEnum: SettingEnums, override var sett
         view.findViewById<ImageView>(R.id.color_circle).setColorFilter(Color.parseColor(settingValue))
         view.findViewById<ImageView>(R.id.color_circle).visibility = View.VISIBLE
         view.setOnClickListener { v ->
-            val dialog = ColorPickerDialog.newBuilder().setColor(Color.parseColor(settingValue)).create()
+            val dialog = ColorPickerDialog.newBuilder().setColor(Color.parseColor(settingValue)).
+                    setDialogTitle(R.string.select_color).setCustomButtonText(R.string.advanced).setPresetsButtonText(R.string.presets).setSelectedButtonText(R.string.select).create()
 
             dialog.setColorPickerDialogListener(object : ColorPickerDialogListener {
                 override fun onDialogDismissed(dialogId: Int) {
@@ -39,6 +40,7 @@ class ColorSettingData(override val settingEnum: SettingEnums, override var sett
     }
 
     override fun changeValue(context: Context, value: String) {
+        settingValue = value
         SettingsManager(context).putSettings(settingEnum, value)
         val model = ViewModelProviders.of(context as FragmentActivity).get(SharedViewModel::class.java)
         when(settingEnum) {

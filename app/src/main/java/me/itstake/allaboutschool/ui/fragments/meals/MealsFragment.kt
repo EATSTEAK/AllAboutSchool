@@ -1,6 +1,9 @@
 package me.itstake.allaboutschool.ui.fragments.meals
 
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -46,8 +49,13 @@ class MealsFragment : Fragment() {
         viewModel.selectedDay.value = Date(System.currentTimeMillis())
         sharedViewModel.primaryColor.observe(this, Observer<String>{
             val color = Color.parseColor(it)
-            meals_toolbar.setBackgroundColor(color)
-            meals_tab.setBackgroundColor(color)
+            val colorAni = ValueAnimator.ofObject(ArgbEvaluator(), (meals_toolbar.background as ColorDrawable).color, color)
+            colorAni.duration = 250
+            colorAni.addUpdateListener {ani ->
+                meals_toolbar.setBackgroundColor(ani.animatedValue as Int)
+                meals_tab.setBackgroundColor(ani.animatedValue as Int)
+            }
+            colorAni.start()
         })
     }
 

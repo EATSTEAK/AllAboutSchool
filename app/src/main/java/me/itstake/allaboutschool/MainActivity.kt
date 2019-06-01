@@ -1,6 +1,9 @@
 package me.itstake.allaboutschool
 
+import android.animation.ArgbEvaluator
+import android.animation.ValueAnimator
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
@@ -16,63 +19,41 @@ import me.itstake.allaboutschool.data.settings.SettingsManager
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navHost:NavHostFragment
-    private lateinit var model: SharedViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var settingsManager: SettingsManager
-    /*private val navListener = BottomNavigationView.OnNavigationItemSelectedListener { t ->
-        when(t.itemId) {
-            R.id.action_feed -> {
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, FeedFragment.newInstance())
-                        .commitNow()
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.action_time_table -> {
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, TimeTableFragment.newInstance())
-                        .commitNow()
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.action_todo -> {
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, ToDoFragment.newInstance())
-                        .commitNow()
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.action_meals -> {
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, MealsFragment.newInstance())
-                        .commitNow()
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.action_settings -> {
-                supportFragmentManager.beginTransaction()
-                        .replace(R.id.main_container, SettingsFragment.newInstance())
-                        .commitNow()
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        false
-    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         settingsManager = SettingsManager(applicationContext)
-        model = ViewModelProviders.of(this).get(SharedViewModel::class.java)
-        model.primaryColor.value = settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String
-        model.secondaryColor.value = settingsManager.getSettings(SettingEnums.GENERAL_SECONDARY_COLOR) as String
+        sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel::class.java)
+
+        //save theme values to viewmodel
+        sharedViewModel.primaryColor.value = settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String
+        sharedViewModel.secondaryColor.value = settingsManager.getSettings(SettingEnums.GENERAL_SECONDARY_COLOR) as String
         when(settingsManager.getSettings(SettingEnums.GENERAL_THEME) as Int) {
             0 -> setTheme(android.R.style.ThemeOverlay_Material_Light)
             1 -> setTheme(android.R.style.ThemeOverlay_Material_Dark)
         }
 
+        //init view
         setContentView(R.layout.main_activity)
-        model.primaryColor.observe(this, Observer<String>{
-            nav.setBackgroundColor(Color.parseColor(it))
+
+        //live color changes
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+        sharedViewModel.primaryColor.observe(this, Observer<String>{
             val window = window
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            window.statusBarColor = Color.parseColor(it)
+            val color = Color.parseColor(it)
+            val colorAni = ValueAnimator.ofObject(ArgbEvaluator(), (nav.background as ColorDrawable).color, color)
+            colorAni.duration = 250
+            colorAni.addUpdateListener {ani ->
+                nav.setBackgroundColor(ani.animatedValue as Int)
+                window.statusBarColor = ani.animatedValue as Int
+            }
+            colorAni.start()
         })
-        model.bottomNavIsShow.observe(this, Observer<Boolean> { b ->
+
+        //bottom nav init
+        sharedViewModel.bottomNavIsShow.observe(this, Observer<Boolean> { b ->
             if(b) {
                 nav.clearAnimation()
                 nav.animate().translationY(nav.height.toFloat()).duration = 200
@@ -82,6 +63,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
         nav.setBackgroundColor(Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String))
+
+        //generate dynamic nav graph
         navHost = main_nav_host_fragment as NavHostFragment
         val graph = navHost.navController.navInflater.inflate(R.navigation.main_nav_graph)
         graph.startDestination = when(settingsManager.getSettings(SettingEnums.GENERAL_DEFAULT_FRAGMENT)) {
@@ -92,8 +75,6 @@ class MainActivity : AppCompatActivity() {
         }
         navHost.navController.graph = graph
         setupWithNavController(nav, navHost.navController)
-
-        //nav.setOnNavigationItemSelectedListener(navListener)
     }
 
 }

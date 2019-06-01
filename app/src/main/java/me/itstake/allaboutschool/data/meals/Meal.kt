@@ -3,13 +3,13 @@ package me.itstake.allaboutschool.data.meals
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import me.itstake.neisinfo.SchoolMeal
+import me.itstake.neisinfo.MealMenu
 import java.util.*
 
-@Entity
+@Entity(tableName = "meals")
 data class Meal(
-    @PrimaryKey val day: Calendar,
-    @ColumnInfo(name="breakfast") val breakfast: ArrayList<SchoolMeal>?,
-    @ColumnInfo(name="lunch") val lunch: ArrayList<SchoolMeal>?,
-    @ColumnInfo(name="dinner") val dinner: ArrayList<SchoolMeal>?
+        @PrimaryKey val day: Date,
+        @ColumnInfo(name="breakfast") val breakfast: List<MealMenu>?,
+        @ColumnInfo(name="lunch") val lunch: List<MealMenu>?,
+        @ColumnInfo(name="dinner") val dinner: List<MealMenu>?
 )

@@ -15,7 +15,7 @@ enum class SettingEnums(val key:String, val type:KClass<*>, val dataType:KClass<
     GENERAL_THEME("general.theme", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_theme_title, null, R.array.themes),
     GENERAL_DEFAULT_FRAGMENT("general.default_fragment", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_default_fragment_title, null, R.array.fragment_options),
     GENERAL_WELCOME_MANAGER("general.welcome_manager", Boolean::class, null, false, false, null, null, null, null),
-    GENERAL_SCHOOL_CODE("general.school_code", String::class, SchoolFindSettingData::class, true, "", null, R.string.settings_general_school_code_title, null, null),
+    GENERAL_SCHOOL_INFO("general.school_info", String::class, SchoolFindSettingData::class, true, "", null, R.string.settings_general_school_code_title, null, null),
     /*
     FEED_CLOCK("feed.clock", Boolean::class, true, true),
     FEED_CLOCK_24HRS("feed.clock_24hrs", Boolean::class, true, false),

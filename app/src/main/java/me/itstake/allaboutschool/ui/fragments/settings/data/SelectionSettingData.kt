@@ -30,6 +30,7 @@ class SelectionSettingData(override val settingEnum: SettingEnums, override var 
     }
 
     override fun changeValue(context: Context, value: Int) {
+        settingValue = value
         SettingsManager(context).putSettings(settingEnum, value)
     }
 }
