@@ -11,11 +11,13 @@ class MealUtils {
     companion object {
         fun getWeekData(context: Context, date: Date, forceUpdate: Boolean): List<Meal> {
             val dateList = ArrayList<Date>()
-            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC+9"))
+            val monthList = ArrayList<Int>()
+            val calendar = Calendar.getInstance()
             calendar.time = date
             calendar.firstDayOfWeek = Calendar.MONDAY
             for(i in 1..7) {
                 calendar.set(Calendar.DAY_OF_WEEK, i)
+                if(!monthList.contains(calendar.get(Calendar.MONTH))) monthList.add(calendar.get(Calendar.MONTH))
                 dateList.add(calendar.time)
             }
             var mealData: List<Meal> = ArrayList()
@@ -25,7 +27,7 @@ class MealUtils {
             }
             if(mealData.isEmpty()) {
                 val school = SettingsManager(context).getSchool() ?: throw NullPointerException("Cannot get stored school information.")
-                cacheMeals(context, school, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH))
+                monthList.forEach { cacheMeals(context, school, calendar.get(Calendar.YEAR), it) }
                 val neisDatabase = NeisDatabase.getInstance(context) ?: throw IOException("Cannot connect to database.")
                 mealData = neisDatabase.mealDao().getByDays(dateList)
             }
@@ -33,14 +35,14 @@ class MealUtils {
         }
 
         private fun cacheMeals(context: Context, school: School, year: Int, month: Int) {
-            val calendar = Calendar.getInstance(TimeZone.getTimeZone("UTC+9"))
+            val calendar = Calendar.getInstance()
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
             val mealList = school.getMealMonthly(year, month)
             val conv = ArrayList<Meal>()
             mealList.keys.forEach {
                 calendar.set(Calendar.DAY_OF_MONTH , it)
-                conv.add(Meal(day = calendar.time, breakfast = mealList[it]?.breakfast, lunch = mealList[it]?.lunch, dinner = mealList[it]?.dinner))
+                conv.add(Meal(day = calendar.time, breakfast = mealList[it]?.breakfast ?:arrayListOf(), lunch = mealList[it]?.lunch ?:arrayListOf(), dinner = mealList[it]?.dinner ?:arrayListOf()))
             }
             NeisDatabase.getInstance(context)?.mealDao()?.insertMeals(*conv.toTypedArray())
         }

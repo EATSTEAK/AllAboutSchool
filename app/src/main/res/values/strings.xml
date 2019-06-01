@@ -22,5 +22,11 @@
     <string name="select_color">색상 선택</string>
     <string name="advanced">고급</string>
     <string name="presets">프리셋</string>
-    <string name="select">선택</string>ㄴ
+    <string name="select">선택</string>
+    <string name="wrong_school_value">데이터를 받아올 학교가 설정되지 않았거나 잘못되었습니다. 설정에서 수정해 주세요.</string>
+    <string name="error">오류</string>
+    <string name="search">검색</string>
+    <string name="schoolsearch_hint">학교 명 입력</string>
+    <string name="no_school">설정된 학교가 없습니다.</string>
+    <string name="no_search_results">검색 결과가 없습니다.</string>
 </resources>

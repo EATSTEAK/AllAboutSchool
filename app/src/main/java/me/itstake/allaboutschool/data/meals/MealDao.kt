@@ -18,4 +18,7 @@ interface MealDao {
     @Query("SELECT * FROM meals WHERE day IN (:days)")
     fun getByDays(days: List<Date>): List<Meal>
 
+    @Query("DELETE FROM meals")
+    fun deleteAll()
+
 }

@@ -2,7 +2,9 @@ package me.itstake.allaboutschool.data.settings
 
 import android.content.Context
 import android.content.SharedPreferences
+import me.itstake.allaboutschool.data.NeisDatabase
 import me.itstake.neisinfo.School
+import org.json.JSONException
 import org.json.JSONObject
 
 class SettingsManager(val context: Context?) {
@@ -28,9 +30,13 @@ class SettingsManager(val context: Context?) {
     }
 
     fun getSchool(): School? {
-        val schoolJson = JSONObject(getSettings(SettingEnums.GENERAL_SCHOOL_INFO) as String)
-        if (schoolJson.has("code") && schoolJson.has("region") && schoolJson.has("type") && schoolJson.has("name")) {
-            return School(School.SchoolType.valueOf(schoolJson["type"] as String), School.SchoolRegion.valueOf(schoolJson["region"] as String), schoolJson["code"] as String, schoolJson["name"] as String)
+        try {
+            val schoolJson = JSONObject(getSettings(SettingEnums.GENERAL_SCHOOL_INFO) as String)
+            if (schoolJson.has("code") && schoolJson.has("region") && schoolJson.has("type") && schoolJson.has("name")) {
+                return School(School.SchoolType.valueOf(schoolJson["type"] as String), School.SchoolRegion.valueOf(schoolJson["region"] as String), schoolJson["code"] as String, schoolJson["name"] as String)
+            }
+        } catch(e: JSONException) {
+            return null
         }
         return null
     }
@@ -41,6 +47,7 @@ class SettingsManager(val context: Context?) {
         schoolJson.put("region", school.region.name)
         schoolJson.put("type", school.type.name)
         schoolJson.put("name", school.name)
+        if(context != null) NeisDatabase.destroyAll(context) // Destroy All caches to avoiding conflicts.
         putSettings(SettingEnums.GENERAL_SCHOOL_INFO, schoolJson.toString(0))
     }
 }

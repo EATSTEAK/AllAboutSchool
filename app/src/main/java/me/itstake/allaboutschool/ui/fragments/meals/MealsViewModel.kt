@@ -7,5 +7,5 @@ import java.util.*
 
 class MealsViewModel: ViewModel() {
     val selectedDay = MutableLiveData<Date>()
-    val weekData = MutableLiveData<ArrayList<Meal>>()
+    val weekData = MutableLiveData<List<Meal>>()
 }

@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import me.itstake.allaboutschool.R
 import me.itstake.allaboutschool.ui.fragments.settings.data.SettingData
 
-class SettingAdapter(val dataset: ArrayList<SettingData<out Any>>): RecyclerView.Adapter<SettingAdapter.SettingViewHolder>() {
+class SettingAdapter(val dataset: ArrayList<SettingData<out Any?>>): RecyclerView.Adapter<SettingAdapter.SettingViewHolder>() {
 
     class SettingViewHolder(val view: View): RecyclerView.ViewHolder(view)
 

@@ -43,7 +43,7 @@ class SettingsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val settingsManager = SettingsManager(activity?.applicationContext)
-        val settingEntries = ArrayList<SettingData<out Any>>()
+        val settingEntries = ArrayList<SettingData<out Any?>>()
 
         //toolbar custom color
         settings_toolbar.setBackgroundColor(Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String))
@@ -82,7 +82,7 @@ class SettingsFragment : Fragment() {
                     val data = when(it.dataType) {
                         BooleanSettingData::class -> BooleanSettingData(it, settingsManager.getSettings(it) as Boolean, it.iconId, localizedTitle, localizedDetails)
                         ColorSettingData::class -> ColorSettingData(it, settingsManager.getSettings(it) as String, it.iconId, localizedTitle, localizedDetails)
-                        SchoolFindSettingData::class -> SchoolFindSettingData(it, settingsManager.getSettings(it) as String, it.iconId, localizedTitle, localizedDetails)
+                        SchoolFindSettingData::class -> SchoolFindSettingData(it, settingsManager.getSchool(), it.iconId, localizedTitle, localizedDetails)
                         SelectionSettingData::class -> if(it.selectionList != null) SelectionSettingData(it, settingsManager.getSettings(it) as Int, it.iconId, localizedTitle, localizedDetails, it.selectionList) else null
                         else -> null
                     }
@@ -97,7 +97,6 @@ class SettingsFragment : Fragment() {
             setHasFixedSize(true)
             layoutManager = LinearLayoutManager(activity)
             adapter = SettingAdapter(settingEntries)
-
         }
     }
 
