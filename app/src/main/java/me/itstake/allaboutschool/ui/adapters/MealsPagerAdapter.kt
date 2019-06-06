@@ -1,21 +1,24 @@
 package me.itstake.allaboutschool.ui.adapters
 
 
-import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import me.itstake.allaboutschool.ui.fragments.meals.MealsViewModel
+import androidx.viewpager.widget.PagerAdapter
+import me.itstake.allaboutschool.data.meals.Meal
+import me.itstake.allaboutschool.ui.fragments.LoadingFragment
+import me.itstake.allaboutschool.ui.fragments.meals.MealMenuFragment
 
-class MealsPagerAdapter(fragmentManager: FragmentManager, pageCount:Int, val model: MealsViewModel): FragmentStatePagerAdapter(fragmentManager, pageCount) {
+class MealsPagerAdapter(fragmentManager: FragmentManager, var dataset: List<Meal>): FragmentStatePagerAdapter(fragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
 
     override fun getItem(position: Int): Fragment {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        if(dataset.isEmpty()) return LoadingFragment.newInstance()
+        return MealMenuFragment.newInstance(dataset[position])
     }
 
-    override fun getCount(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getCount(): Int = if(dataset.isEmpty()) 1 else dataset.size
 
-    override fun isViewFromObject(view: View, `object`: Any): Boolean = view == `object`
+    override fun getItemPosition(`object`: Any): Int {
+        return PagerAdapter.POSITION_NONE
+    }
 }

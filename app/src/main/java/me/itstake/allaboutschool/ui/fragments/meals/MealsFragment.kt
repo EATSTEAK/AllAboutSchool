@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.meal_fragment.*
 import me.itstake.allaboutschool.R
 import me.itstake.allaboutschool.SharedViewModel
@@ -25,6 +26,7 @@ import me.itstake.allaboutschool.data.meals.Meal
 import me.itstake.allaboutschool.data.meals.MealUtils
 import me.itstake.allaboutschool.data.settings.SettingEnums
 import me.itstake.allaboutschool.data.settings.SettingsManager
+import me.itstake.allaboutschool.ui.adapters.MealsPagerAdapter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -64,37 +66,68 @@ class MealsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         val settingsManager = SettingsManager(activity?.applicationContext)
         val primaryColor = Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String)
+        val secondaryColor = Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_SECONDARY_COLOR) as String)
         meals_toolbar.setBackgroundColor(primaryColor)
         meals_tab.setBackgroundColor(primaryColor)
+        meals_tab.setSelectedTabIndicatorColor(secondaryColor)
         (activity as AppCompatActivity).setSupportActionBar(meals_toolbar)
         sharedViewModel.primaryColor.observe(this, Observer<String>{
             val color = Color.parseColor(it)
             val colorAni = ValueAnimator.ofObject(ArgbEvaluator(), (meals_toolbar.background as ColorDrawable).color, color)
             colorAni.duration = 250
             colorAni.addUpdateListener {ani ->
-                meals_toolbar.setBackgroundColor(ani.animatedValue as Int)
-                meals_tab.setBackgroundColor(ani.animatedValue as Int)
+                if(meals_toolbar != null && meals_tab != null) {
+                    meals_toolbar.setBackgroundColor(ani.animatedValue as Int)
+                    meals_tab.setBackgroundColor(ani.animatedValue as Int)
+                }
             }
             colorAni.start()
         })
-
+        sharedViewModel.secondaryColor.observe(this, Observer<String>{
+            meals_tab.setSelectedTabIndicatorColor(Color.parseColor(it))
+        })
 
         //loading viewpager setup
+        meals_viewpager.adapter = MealsPagerAdapter(requireFragmentManager(), arrayListOf())
+        meals_viewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(meals_tab))
+        meals_tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+                //DO NOTHING
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+                //DO NOTHING
+            }
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                meals_viewpager.setCurrentItem(meals_tab.selectedTabPosition, true)
+            }
+        })
+
 
         //ui update as meals data received.
         viewModel.weekData.observe(this, Observer<List<Meal>>{
             val sdf = SimpleDateFormat("M/d (E)", Locale.getDefault())
             meals_tab.removeAllTabs()
+            var todayIndex = 0
+            var finalTodayIndex = 0
             it.forEach {meal ->
                 meals_tab.addTab(meals_tab.newTab().setText(sdf.format(meal.day)))
+                if(sdf.format(meal.day) != sdf.format(Date(System.currentTimeMillis()))) todayIndex++ else finalTodayIndex = todayIndex
             }
+            meals_tab.getTabAt(finalTodayIndex)?.select()
             if(meals_tab.height == 0 && it.isNotEmpty()) {
                 println("TabLayout Expanded")
                 meals_tab.expand()
             }
+            if(meals_viewpager.adapter is MealsPagerAdapter) {
+                meals_viewpager.adapter = MealsPagerAdapter(requireFragmentManager(), it)
+                meals_viewpager.setCurrentItem(meals_tab.selectedTabPosition, false)
+            }
+
         })
+    }
 
-
+    override fun onStart() {
+        super.onStart()
         //data setup
         viewModel.selectedDay.value = Date(System.currentTimeMillis())
         Thread(Runnable {
@@ -133,7 +166,7 @@ private fun View.expand() {
             return true
         }
     }
-    // 1dp/ms
-    a.duration = ((targetHeight / context.resources.displayMetrics.density).toInt()).toLong()
+    // 0.1dp/ms
+    a.duration = ((targetHeight * 10 / context.resources.displayMetrics.density).toInt()).toLong()
     startAnimation(a)
 }

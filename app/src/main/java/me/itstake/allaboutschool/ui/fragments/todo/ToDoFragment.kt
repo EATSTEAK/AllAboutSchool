@@ -19,8 +19,4 @@ class ToDoFragment : Fragment() {
         return inflater.inflate(R.layout.to_do_fragment, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
 }

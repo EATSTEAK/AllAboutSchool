@@ -22,6 +22,8 @@ import me.itstake.allaboutschool.data.settings.SettingEnums
 import me.itstake.allaboutschool.data.settings.SettingsManager
 import me.itstake.allaboutschool.ui.adapters.SettingAdapter
 import me.itstake.allaboutschool.ui.fragments.settings.data.*
+import me.itstake.allaboutschool.ui.listeners.HideBottomNavOnScrollListener
+import me.itstake.neisinfo.School
 
 class SettingsFragment : Fragment() {
 
@@ -53,10 +55,13 @@ class SettingsFragment : Fragment() {
             val colorAni = ValueAnimator.ofObject(ArgbEvaluator(), (settings_toolbar.background as ColorDrawable).color, color)
             colorAni.duration = 250
             colorAni.addUpdateListener {ani ->
-                settings_toolbar.setBackgroundColor(ani.animatedValue as Int)
+                if(settings_toolbar != null) settings_toolbar.setBackgroundColor(ani.animatedValue as Int)
             }
             colorAni.start()
         })
+
+        //autohide bottomnav on scroll
+        settings_recycler.addOnScrollListener(HideBottomNavOnScrollListener(sharedViewModel))
 
         //nav backbutton operation
         settings_toolbar.setNavigationOnClickListener {
@@ -67,10 +72,12 @@ class SettingsFragment : Fragment() {
             (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
             (activity as AppCompatActivity).supportActionBar?.setDisplayShowHomeEnabled(false)
             settingEntries.add(SettingNavigationData(SettingEnums.NAVIGATION, 1, R.drawable.ic_settings_grey600_24dp, getString(R.string.settings_general_title), getString(R.string.settings_general_details)))
+            settingEntries.add(SettingNavigationData(SettingEnums.NAVIGATION, 5, R.drawable.baseline_restaurant_24, getString(R.string.settings_meal_title), getString(R.string.settings_meal_details)))
         } else {
             val page = SettingData.SettingPage.getByKey(args.settingsType)
             settings_toolbar.setTitle(when(page) {
                 SettingData.SettingPage.GENERAL -> R.string.settings_general_title
+                SettingData.SettingPage.MEALS -> R.string.settings_meal_title
                 else -> R.string.frag_settings
             })
             (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -82,14 +89,14 @@ class SettingsFragment : Fragment() {
                     val data = when(it.dataType) {
                         BooleanSettingData::class -> BooleanSettingData(it, settingsManager.getSettings(it) as Boolean, it.iconId, localizedTitle, localizedDetails)
                         ColorSettingData::class -> ColorSettingData(it, settingsManager.getSettings(it) as String, it.iconId, localizedTitle, localizedDetails)
-                        SchoolFindSettingData::class -> SchoolFindSettingData(it, settingsManager.getSchool(), it.iconId, localizedTitle, localizedDetails)
+                        SchoolFindSettingData::class -> SchoolFindSettingData(it, settingsManager.getSettings(it) as School?, it.iconId, localizedTitle, localizedDetails)
                         SelectionSettingData::class -> if(it.selectionList != null) SelectionSettingData(it, settingsManager.getSettings(it) as Int, it.iconId, localizedTitle, localizedDetails, it.selectionList) else null
+                        MultipleSelectionSettingData::class -> if(it.selectionList != null) MultipleSelectionSettingData(it, (settingsManager.getSettings(it) as IntArray).asList(), it.iconId, localizedTitle, localizedDetails, it.selectionList) else null
                         else -> null
                     }
                     if(data != null) settingEntries.add(data)
                 }
             }
-
         }
 
         //recycler init

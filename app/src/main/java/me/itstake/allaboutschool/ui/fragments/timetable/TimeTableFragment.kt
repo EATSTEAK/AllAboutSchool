@@ -18,8 +18,4 @@ class TimeTableFragment : Fragment() {
         return inflater.inflate(R.layout.time_table_fragment, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
 }

@@ -1,10 +1,8 @@
 package me.itstake.allaboutschool.data.settings
 
 import me.itstake.allaboutschool.R
-import me.itstake.allaboutschool.ui.fragments.settings.data.ColorSettingData
-import me.itstake.allaboutschool.ui.fragments.settings.data.SchoolFindSettingData
-import me.itstake.allaboutschool.ui.fragments.settings.data.SelectionSettingData
-import me.itstake.allaboutschool.ui.fragments.settings.data.SettingData
+import me.itstake.allaboutschool.ui.fragments.settings.data.*
+import me.itstake.neisinfo.School
 import kotlin.reflect.KClass
 
 enum class SettingEnums(val key:String, val type:KClass<*>, val dataType:KClass<out SettingData<*>>?, val showUI:Boolean, val defaultValue: Any, val iconId: Int?, val localizedTitle: Int?, val localizedDetails: Int?, val selectionList: Int?) {
@@ -15,7 +13,9 @@ enum class SettingEnums(val key:String, val type:KClass<*>, val dataType:KClass<
     GENERAL_THEME("general.theme", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_theme_title, null, R.array.themes),
     GENERAL_DEFAULT_FRAGMENT("general.default_fragment", Int::class, SelectionSettingData::class, true, 0, null, R.string.settings_general_default_fragment_title, null, R.array.fragment_options),
     GENERAL_WELCOME_MANAGER("general.welcome_manager", Boolean::class, null, false, false, null, null, null, null),
-    GENERAL_SCHOOL_INFO("general.school_info", String::class, SchoolFindSettingData::class, true, "", null, R.string.settings_general_school_code_title, null, null),
+    GENERAL_SCHOOL_INFO("general.school_info", School::class, SchoolFindSettingData::class, true, "", null, R.string.settings_general_school_code_title, null, null),
+
+    MEALS_ALLERGY_WARNING("meals.allergy_warning", IntArray::class, MultipleSelectionSettingData::class, true, "[]", null, R.string.settings_meal_allergy_warning_title, null, R.array.allergies),
     /*
     FEED_CLOCK("feed.clock", Boolean::class, true, true),
     FEED_CLOCK_24HRS("feed.clock_24hrs", Boolean::class, true, false),
@@ -34,7 +34,7 @@ enum class SettingEnums(val key:String, val type:KClass<*>, val dataType:KClass<
 
     TO_DO_SHOW_AS_D_DAY("to_do.show_as_d_day", Boolean::class, true, true),
     TO_DO_MAIN_LIST("to_do.main_list", Int::class, true, 0),
-
-    MEALS_ALLERGY_WARNING("meals.allergy_warning", Boolean::class, true, true),
     */
+
+
 }

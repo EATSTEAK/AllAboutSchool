@@ -2,6 +2,7 @@ package me.itstake.allaboutschool.data.meals
 
 import android.content.Context
 import me.itstake.allaboutschool.data.NeisDatabase
+import me.itstake.allaboutschool.data.settings.SettingEnums
 import me.itstake.allaboutschool.data.settings.SettingsManager
 import me.itstake.neisinfo.School
 import java.io.IOException
@@ -15,7 +16,7 @@ class MealUtils {
             val calendar = Calendar.getInstance()
             calendar.time = date
             calendar.firstDayOfWeek = Calendar.MONDAY
-            for(i in 1..7) {
+            for(i in 0..6) {
                 calendar.set(Calendar.DAY_OF_WEEK, i)
                 if(!monthList.contains(calendar.get(Calendar.MONTH))) monthList.add(calendar.get(Calendar.MONTH))
                 dateList.add(calendar.time)
@@ -26,7 +27,7 @@ class MealUtils {
                 mealData = neisDatabase.mealDao().getByDays(dateList)
             }
             if(mealData.isEmpty()) {
-                val school = SettingsManager(context).getSchool() ?: throw NullPointerException("Cannot get stored school information.")
+                val school = SettingsManager(context).getSettings(SettingEnums.GENERAL_SCHOOL_INFO) as School? ?: throw NullPointerException("Cannot get stored school information.")
                 monthList.forEach { cacheMeals(context, school, calendar.get(Calendar.YEAR), it) }
                 val neisDatabase = NeisDatabase.getInstance(context) ?: throw IOException("Cannot connect to database.")
                 mealData = neisDatabase.mealDao().getByDays(dateList)
@@ -35,10 +36,11 @@ class MealUtils {
         }
 
         private fun cacheMeals(context: Context, school: School, year: Int, month: Int) {
+            println("Requested Year and Month: $year / ${month+1}")
             val calendar = Calendar.getInstance()
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
-            val mealList = school.getMealMonthly(year, month)
+            val mealList = school.getMealMonthly(year, month+1)
             val conv = ArrayList<Meal>()
             mealList.keys.forEach {
                 calendar.set(Calendar.DAY_OF_MONTH , it)

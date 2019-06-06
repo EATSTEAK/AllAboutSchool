@@ -19,7 +19,15 @@ class ColorSettingData(override val settingEnum: SettingEnums, override var sett
     override fun initView(view: View) {
         view.findViewById<TextView>(R.id.setting_entry_title).text = localizedTitle
         if(localizedDetails == "") view.findViewById<TextView>(R.id.setting_entry_details).visibility = View.GONE else view.findViewById<TextView>(R.id.setting_entry_details).text = localizedDetails
-        if(iconId != null) view.findViewById<ImageView>(R.id.setting_entry_icon).setImageResource(iconId) else view.findViewById<ImageView>(R.id.setting_entry_icon).visibility = View.GONE
+        if(iconId != null) {
+            view.findViewById<ImageView>(R.id.setting_entry_icon).setImageResource(iconId)
+            val sharedViewModel = (view.context as FragmentActivity).run {
+                ViewModelProviders.of(this).get(SharedViewModel::class.java)
+            }
+            view.findViewById<ImageView>(R.id.setting_entry_icon).setColorFilter(Color.parseColor(sharedViewModel.primaryColor.value))
+        } else {
+            view.findViewById<ImageView>(R.id.setting_entry_icon).visibility = View.GONE
+        }
         view.findViewById<ImageView>(R.id.color_circle).setColorFilter(Color.parseColor(settingValue))
         view.findViewById<ImageView>(R.id.color_circle).visibility = View.VISIBLE
         view.setOnClickListener { v ->
