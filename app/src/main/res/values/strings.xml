@@ -41,4 +41,5 @@
     <string name="settings_meal_allergy_warning_title">알레르기 정보</string>
     <string name="settings_meal_title">급식표</string>
     <string name="settings_meal_details">급식표 표시/평가 관련 설정</string>
+    <string name="day_select">날짜 선택</string>
 </resources>

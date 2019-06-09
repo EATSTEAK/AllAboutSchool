@@ -2,6 +2,7 @@ package me.itstake.allaboutschool.ui.fragments.meals
 
 import android.animation.ArgbEvaluator
 import android.animation.ValueAnimator
+import android.app.DatePickerDialog
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -51,6 +52,7 @@ class MealsFragment : Fragment() {
             }
         }
     }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         sharedViewModel = activity?.run {
@@ -59,18 +61,37 @@ class MealsFragment : Fragment() {
         viewModel = activity?.run {
             ViewModelProviders.of(this).get(MealsViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
-        return inflater.inflate(R.layout.meal_fragment, container, false)
+        val view = inflater.inflate(R.layout.meal_fragment, container, false)
+        (activity as AppCompatActivity).setSupportActionBar(meals_toolbar)
+        return view
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val settingsManager = SettingsManager(activity?.applicationContext)
+        //initiate toolbar action buttons
+        meals_toolbar.inflateMenu(R.menu.meal_menu)
+        meals_toolbar.setOnMenuItemClickListener{
+            when(it.itemId) {
+                R.id.day_select -> {
+                    //Toast.makeText(context, "Hello World!", Toast.LENGTH_LONG).show()
+                    val cal = Calendar.getInstance()
+                    cal.time = viewModel.selectedDay.value ?: Date(System.currentTimeMillis())
+                    DatePickerDialog(requireContext(), DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                        cal.set(year, month, dayOfMonth)
+                        viewModel.selectedDay.value = cal.time
+                    }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
+                }
+            }
+            true
+        }
+        //for dynamic color change
         val primaryColor = Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String)
         val secondaryColor = Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_SECONDARY_COLOR) as String)
         meals_toolbar.setBackgroundColor(primaryColor)
         meals_tab.setBackgroundColor(primaryColor)
         meals_tab.setSelectedTabIndicatorColor(secondaryColor)
-        (activity as AppCompatActivity).setSupportActionBar(meals_toolbar)
         sharedViewModel.primaryColor.observe(this, Observer<String>{
             val color = Color.parseColor(it)
             val colorAni = ValueAnimator.ofObject(ArgbEvaluator(), (meals_toolbar.background as ColorDrawable).color, color)
@@ -102,7 +123,6 @@ class MealsFragment : Fragment() {
             }
         })
 
-
         //ui update as meals data received.
         viewModel.weekData.observe(this, Observer<List<Meal>>{
             val sdf = SimpleDateFormat("M/d (E)", Locale.getDefault())
@@ -115,31 +135,31 @@ class MealsFragment : Fragment() {
             }
             meals_tab.getTabAt(finalTodayIndex)?.select()
             if(meals_tab.height == 0 && it.isNotEmpty()) {
-                println("TabLayout Expanded")
                 meals_tab.expand()
             }
             if(meals_viewpager.adapter is MealsPagerAdapter) {
                 meals_viewpager.adapter = MealsPagerAdapter(requireFragmentManager(), it)
                 meals_viewpager.setCurrentItem(meals_tab.selectedTabPosition, false)
             }
-
         })
     }
 
     override fun onStart() {
         super.onStart()
         //data setup
-        viewModel.selectedDay.value = Date(System.currentTimeMillis())
-        Thread(Runnable {
-            try {
-                val message = Message()
-                message.what = 0
-                message.obj = MealUtils.getWeekData(requireContext(), Date(System.currentTimeMillis()), false)
-                handler.sendMessage(message)
-            } catch(e: NullPointerException) {
-                handler.sendEmptyMessage(1)
-            }
-        }).start()
+        if(viewModel.selectedDay.value == null) viewModel.selectedDay.value = Date(System.currentTimeMillis())
+        viewModel.selectedDay.observe(this, Observer {
+            Thread(Runnable {
+                try {
+                    val message = Message()
+                    message.what = 0
+                    message.obj = MealUtils.getWeekData(requireContext(), it, false)
+                    handler.sendMessage(message)
+                } catch(e: NullPointerException) {
+                    handler.sendEmptyMessage(1)
+                }
+            }).start()
+        })
     }
 
 }

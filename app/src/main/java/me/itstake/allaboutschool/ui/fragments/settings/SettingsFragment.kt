@@ -39,7 +39,9 @@ class SettingsFragment : Fragment() {
         sharedViewModel = activity?.run {
             ViewModelProviders.of(this).get(SharedViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
-        return inflater.inflate(R.layout.settings_fragment, container, false)
+        val view = inflater.inflate(R.layout.settings_fragment, container, false)
+        (activity as AppCompatActivity).setSupportActionBar(settings_toolbar)
+        return view
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -49,7 +51,6 @@ class SettingsFragment : Fragment() {
 
         //toolbar custom color
         settings_toolbar.setBackgroundColor(Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String))
-        (activity as AppCompatActivity).setSupportActionBar(settings_toolbar)
         sharedViewModel.primaryColor.observe(this, Observer<String>{
             val color = Color.parseColor(it)
             val colorAni = ValueAnimator.ofObject(ArgbEvaluator(), (settings_toolbar.background as ColorDrawable).color, color)

@@ -36,7 +36,9 @@ class FeedFragment : Fragment() {
         sharedViewModel = activity?.run {
             ViewModelProviders.of(this).get(SharedViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
-        return inflater.inflate(R.layout.feed_fragment, container, false)
+        val view = inflater.inflate(R.layout.feed_fragment, container, false)
+        (activity as AppCompatActivity).setSupportActionBar(feed_toolbar)
+        return view
     }
 
 
@@ -64,7 +66,6 @@ class FeedFragment : Fragment() {
         })
 
         //Bind ActionBar
-        (activity as AppCompatActivity).setSupportActionBar(feed_toolbar)
         (activity as AppCompatActivity).supportActionBar?.setDisplayShowTitleEnabled(false)
 
         super.onActivityCreated(savedInstanceState)
