@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:id="@+id/scrollView">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+        <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"/>
+
+        <TextView
+                android:text="@string/meals_no_results"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/no_results"
+                android:gravity="center"
+                android:visibility="gone"/>
+
+        <TextView
+                android:text="@string/breakfast"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakfast"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                android:layout_margin="10dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/breakfast_recycler"
+                android:visibility="gone"
+                android:overScrollMode="never">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/underline"
+                android:id="@+id/divider1"
+                android:contentDescription="@string/divider"
+                android:visibility="gone"
+                android:layout_marginStart="18dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"/>
+
+        <TextView
+                android:text="@string/lunch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lunch"
+                android:layout_margin="10dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                />
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lunch_recycler"
+                android:visibility="gone"
+                android:overScrollMode="never">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/underline"
+                android:id="@+id/divider2"
+                android:contentDescription="@string/divider"
+                android:visibility="gone"
+                android:layout_marginBottom="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="18dp"
+                android:layout_marginStart="18dp"/>
+
+        <TextView
+                android:text="@string/dinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/dinner"
+                android:layout_margin="10dp"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                />
+
+        <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/dinner_recycler"
+                android:visibility="gone"
+                android:overScrollMode="never"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

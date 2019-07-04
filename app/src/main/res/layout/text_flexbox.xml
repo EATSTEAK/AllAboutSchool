@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.flexbox.FlexboxLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                          xmlns:app="http://schemas.android.com/apk/res-auto"
+                                          android:layout_width="match_parent"
+                                          android:layout_height="wrap_content"
+                                          app:flexWrap="wrap"
+                                          app:alignItems="center"
+                                          app:alignContent="center"
+                                          android:id="@+id/text_flexbox"
+                                          android:clickable="true"
+                                          android:focusable="true"
+                                          android:foreground="?android:attr/selectableItemBackground"
+                                          android:padding="8dp">
+
+</com.google.android.flexbox.FlexboxLayout>
