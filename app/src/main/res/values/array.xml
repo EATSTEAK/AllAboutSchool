@@ -5,9 +5,10 @@
         <item>@string/theme_dark</item>
     </array>
     <array name="fragment_options">
-        <item>@string/frag_feed</item>
+        <!-- <item>@string/frag_feed</item>
         <item>@string/frag_time_table</item>
         <item>@string/frag_todo</item>
+        -->
         <item>@string/frag_meals</item>
     </array>
     <array name="regions">

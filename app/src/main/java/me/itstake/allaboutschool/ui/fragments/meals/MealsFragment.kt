@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.tabs.TabLayout
-import kotlinx.android.synthetic.main.meal_fragment.*
+import kotlinx.android.synthetic.main.meals_fragment.*
 import me.itstake.allaboutschool.R
 import me.itstake.allaboutschool.SharedViewModel
 import me.itstake.allaboutschool.data.meals.Meal
@@ -48,6 +48,7 @@ class MealsFragment : Fragment() {
                         viewModel.weekData.value = msg.obj as List<Meal>
                     }
                     1 -> AlertDialog.Builder(requireActivity()).setMessage(R.string.wrong_school_value).setTitle(R.string.error).show()
+                    2 -> AlertDialog.Builder(requireActivity()).setMessage(R.string.wrong_school_value).setTitle(R.string.no_internet).show()
                 }
             }
         }
@@ -61,7 +62,7 @@ class MealsFragment : Fragment() {
         viewModel = activity?.run {
             ViewModelProviders.of(this).get(MealsViewModel::class.java)
         } ?: throw Exception("Invalid Activity")
-        val view = inflater.inflate(R.layout.meal_fragment, container, false)
+        val view = inflater.inflate(R.layout.meals_fragment, container, false)
         (activity as AppCompatActivity).setSupportActionBar(meals_toolbar)
         return view
 
@@ -70,30 +71,15 @@ class MealsFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val settingsManager = SettingsManager(activity?.applicationContext)
-        //initiate toolbar action buttons
-        meals_toolbar.inflateMenu(R.menu.meal_menu)
-        meals_toolbar.setOnMenuItemClickListener{
-            when(it.itemId) {
-                R.id.day_select -> {
-                    //Toast.makeText(context, "Hello World!", Toast.LENGTH_LONG).show()
-                    val cal = Calendar.getInstance()
-                    cal.time = viewModel.selectedDay.value ?: Date(System.currentTimeMillis())
-                    DatePickerDialog(requireContext(), DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-                        cal.set(year, month, dayOfMonth)
-                        viewModel.selectedDay.value = cal.time
-                    }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
-                }
-            }
-            true
-        }
         //for dynamic color change
-        val primaryColor = Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String)
-        val secondaryColor = Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_SECONDARY_COLOR) as String)
+        var primaryColor = Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_PRIMARY_COLOR) as String)
+        var secondaryColor = Color.parseColor(settingsManager.getSettings(SettingEnums.GENERAL_SECONDARY_COLOR) as String)
         meals_toolbar.setBackgroundColor(primaryColor)
         meals_tab.setBackgroundColor(primaryColor)
         meals_tab.setSelectedTabIndicatorColor(secondaryColor)
         sharedViewModel.primaryColor.observe(this, Observer<String>{
             val color = Color.parseColor(it)
+            primaryColor = color
             val colorAni = ValueAnimator.ofObject(ArgbEvaluator(), (meals_toolbar.background as ColorDrawable).color, color)
             colorAni.duration = 250
             colorAni.addUpdateListener {ani ->
@@ -105,8 +91,30 @@ class MealsFragment : Fragment() {
             colorAni.start()
         })
         sharedViewModel.secondaryColor.observe(this, Observer<String>{
-            meals_tab.setSelectedTabIndicatorColor(Color.parseColor(it))
+            val color = Color.parseColor(it)
+            secondaryColor = color
+            meals_tab.setSelectedTabIndicatorColor(color)
         })
+
+        //initiate toolbar action buttons
+        meals_toolbar.inflateMenu(R.menu.meal_menu)
+        meals_toolbar.setOnMenuItemClickListener{
+            when(it.itemId) {
+                R.id.day_select -> {
+                    //Toast.makeText(context, "Hello World!", Toast.LENGTH_LONG).show()
+                    val cal = Calendar.getInstance()
+                    cal.time = viewModel.selectedDay.value ?: Date(System.currentTimeMillis())
+                    val dialog = DatePickerDialog(requireContext(), DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+                        cal.set(year, month, dayOfMonth)
+                        viewModel.selectedDay.value = cal.time
+                    }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH))
+                    dialog.show()
+                    dialog.getButton(DatePickerDialog.BUTTON_POSITIVE).setTextColor(secondaryColor)
+                    dialog.getButton(DatePickerDialog.BUTTON_NEGATIVE).setTextColor(secondaryColor)
+                }
+            }
+            true
+        }
 
         //loading viewpager setup
         meals_viewpager.adapter = MealsPagerAdapter(requireFragmentManager(), arrayListOf())
@@ -157,6 +165,8 @@ class MealsFragment : Fragment() {
                     handler.sendMessage(message)
                 } catch(e: NullPointerException) {
                     handler.sendEmptyMessage(1)
+                } catch(e: Exception) {
+                    handler.sendEmptyMessage(2)
                 }
             }).start()
         })

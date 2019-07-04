@@ -59,7 +59,7 @@
             android:id="@+id/action_meals"
             android:name="me.itstake.allaboutschool.ui.fragments.meals.MealsFragment"
             android:label="meal_fragment"
-            tools:layout="@layout/meal_fragment">
+            tools:layout="@layout/meals_fragment">
         <action
                 android:id="@+id/action_action_meals_to_action_feed"
                 app:destination="@id/action_feed"/>

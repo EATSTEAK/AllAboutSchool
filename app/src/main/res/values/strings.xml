@@ -42,4 +42,6 @@
     <string name="settings_meal_title">급식표</string>
     <string name="settings_meal_details">급식표 표시/평가 관련 설정</string>
     <string name="day_select">날짜 선택</string>
+    <string name="none">없음</string>
+    <string name="no_internet">인터넷 연결을 확인해 주세요.</string>
 </resources>

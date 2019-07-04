@@ -67,10 +67,11 @@ class MainActivity : AppCompatActivity() {
         //generate dynamic nav graph
         navHost = main_nav_host_fragment as NavHostFragment
         val graph = navHost.navController.navInflater.inflate(R.navigation.main_nav_graph)
-        graph.startDestination = when(settingsManager.getSettings(SettingEnums.GENERAL_DEFAULT_FRAGMENT)) {
-            1 -> R.id.action_time_table
-            2 -> R.id.action_todo
-            3 -> R.id.action_meals
+        val array = resources.getStringArray(R.array.fragment_options)
+        graph.startDestination = when(array[settingsManager.getSettings(SettingEnums.GENERAL_DEFAULT_FRAGMENT) as Int]) {
+            resources.getString(R.string.frag_time_table) -> R.id.action_time_table
+            resources.getString(R.string.frag_todo) -> R.id.action_todo
+            resources.getString(R.string.frag_meals) -> R.id.action_meals
             else -> R.id.action_feed
         }
         navHost.navController.graph = graph
