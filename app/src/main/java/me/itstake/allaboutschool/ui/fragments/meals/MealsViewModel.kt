@@ -8,4 +8,5 @@ import java.util.*
 class MealsViewModel: ViewModel() {
     val selectedDay = MutableLiveData<Date>()
     val weekData = MutableLiveData<List<Meal>>()
+    val errorCode = MutableLiveData<Int>()
 }

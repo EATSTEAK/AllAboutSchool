@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class DateConverter {
+
     @TypeConverter
     fun fromDateString(value: String?): Date? = SimpleDateFormat("yyyy-MM-dd", Locale.KOREA).parse(value)
 

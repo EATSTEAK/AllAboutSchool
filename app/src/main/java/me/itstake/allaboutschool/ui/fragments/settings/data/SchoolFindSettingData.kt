@@ -9,7 +9,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import me.itstake.allaboutschool.R
 import me.itstake.allaboutschool.SharedViewModel
-import me.itstake.allaboutschool.data.NeisDatabase
+import me.itstake.allaboutschool.data.AppDatabase
 import me.itstake.allaboutschool.data.settings.SettingEnums
 import me.itstake.allaboutschool.data.settings.SettingsManager
 import me.itstake.allaboutschool.ui.dialogs.SchoolSearchDialog
@@ -45,7 +45,7 @@ class SchoolFindSettingData(override val settingEnum: SettingEnums, override var
         settingValue = value
         if(value != null) SettingsManager(context).putSettings(settingEnum, value)
         if(settingEnum == SettingEnums.GENERAL_SCHOOL_INFO) {
-            NeisDatabase.destroyAll(context)
+            AppDatabase.destroyAll(context)
         }
     }
 }

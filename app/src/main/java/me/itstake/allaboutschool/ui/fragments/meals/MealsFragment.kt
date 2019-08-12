@@ -45,10 +45,17 @@ class MealsFragment : Fragment() {
             if(msg != null) {
                 when(msg.what) {
                     0 -> {
+                        viewModel.errorCode.value = 0
                         viewModel.weekData.value = msg.obj as List<Meal>
                     }
-                    1 -> AlertDialog.Builder(requireActivity()).setMessage(R.string.wrong_school_value).setTitle(R.string.error).show()
-                    2 -> AlertDialog.Builder(requireActivity()).setMessage(R.string.wrong_school_value).setTitle(R.string.no_internet).show()
+                    1 -> {
+                        AlertDialog.Builder(requireActivity()).setMessage(R.string.wrong_school_description).setTitle(R.string.error_title).show()
+                        viewModel.errorCode.value = 1
+                    }
+                    2 -> {
+                        AlertDialog.Builder(requireActivity()).setMessage(R.string.no_internet).setTitle(R.string.error_title).show()
+                        viewModel.errorCode.value = 2
+                    }
                 }
             }
         }
@@ -117,7 +124,7 @@ class MealsFragment : Fragment() {
         }
 
         //loading viewpager setup
-        meals_viewpager.adapter = MealsPagerAdapter(requireFragmentManager(), arrayListOf())
+        meals_viewpager.adapter = MealsPagerAdapter(requireFragmentManager(), arrayListOf(), (viewModel.errorCode.value ?: 0))
         meals_viewpager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(meals_tab))
         meals_tab.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
@@ -146,10 +153,14 @@ class MealsFragment : Fragment() {
                 meals_tab.expand()
             }
             if(meals_viewpager.adapter is MealsPagerAdapter) {
-                meals_viewpager.adapter = MealsPagerAdapter(requireFragmentManager(), it)
-                meals_viewpager.setCurrentItem(meals_tab.selectedTabPosition, false)
+                meals_viewpager.adapter = MealsPagerAdapter(requireFragmentManager(), it, (viewModel.errorCode.value ?: 0))
+                if((viewModel.errorCode.value ?: 0) == 0) meals_viewpager.setCurrentItem(meals_tab.selectedTabPosition, false)
             }
         })
+
+        viewModel.errorCode.observe(this, Observer<Int> {
+           if(it != 0) meals_viewpager.adapter = MealsPagerAdapter(requireFragmentManager(), arrayListOf(), it)
+        });
     }
 
     override fun onStart() {

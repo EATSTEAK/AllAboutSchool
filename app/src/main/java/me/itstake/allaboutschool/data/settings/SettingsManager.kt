@@ -8,8 +8,8 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class SettingsManager(val context: Context?) {
-    val pref:SharedPreferences? = context?.getSharedPreferences("settings", 0)
-    val editor:SharedPreferences.Editor? = pref?.edit()
+    private val pref:SharedPreferences? = context?.getSharedPreferences("settings", 0)
+    private val editor:SharedPreferences.Editor? = pref?.edit()
 
     fun getSettings(settingEnums: SettingEnums): Any? = when {
             settingEnums.type == Int::class -> pref?.getInt(settingEnums.key, settingEnums.defaultValue as Int)

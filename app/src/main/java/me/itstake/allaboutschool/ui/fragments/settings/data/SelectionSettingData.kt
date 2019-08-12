@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProviders
 import me.itstake.allaboutschool.R
@@ -28,11 +29,12 @@ class SelectionSettingData(override val settingEnum: SettingEnums, override var 
             view.findViewById<ImageView>(R.id.setting_entry_icon).visibility = View.GONE
         }
         view.setOnClickListener { v ->
-            AlertDialog.Builder(v.context).setTitle(localizedTitle).setItems(settingList) { dialog, which ->
+            AlertDialog.Builder(v.context).setTitle(localizedTitle).setItems(settingList) { _, which ->
                 changeValue(v.context, which)
                 view.findViewById<TextView>(R.id.setting_entry_details).text = view.resources.getStringArray(settingList)[which]
                 if(settingEnum == SettingEnums.GENERAL_THEME) {
                     Toast.makeText(v.context, R.string.applies_restart, Toast.LENGTH_LONG).show()
+                    //(view.context as AppCompatActivity).recreate()
                 }
             }.show()
         }

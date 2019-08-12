@@ -1,7 +1,7 @@
 package me.itstake.allaboutschool.data.meals
 
 import android.content.Context
-import me.itstake.allaboutschool.data.NeisDatabase
+import me.itstake.allaboutschool.data.AppDatabase
 import me.itstake.allaboutschool.data.settings.SettingEnums
 import me.itstake.allaboutschool.data.settings.SettingsManager
 import me.itstake.neisinfo.School
@@ -23,13 +23,13 @@ class MealUtils {
             }
             var mealData: List<Meal> = ArrayList()
             if(!forceUpdate) {
-                val neisDatabase = NeisDatabase.getInstance(context) ?: throw IOException("Cannot connect to database.")
+                val neisDatabase = AppDatabase.getInstance(context) ?: throw IOException("Cannot connect to database.")
                 mealData = neisDatabase.mealDao().getByDays(dateList)
             }
             if(mealData.isEmpty()) {
                 val school = SettingsManager(context).getSettings(SettingEnums.GENERAL_SCHOOL_INFO) as School? ?: throw NullPointerException("Cannot get stored school information.")
                 monthList.forEach { cacheMeals(context, school, calendar.get(Calendar.YEAR), it) }
-                val neisDatabase = NeisDatabase.getInstance(context) ?: throw IOException("Cannot connect to database.")
+                val neisDatabase = AppDatabase.getInstance(context) ?: throw IOException("Cannot connect to database.")
                 mealData = neisDatabase.mealDao().getByDays(dateList)
             }
             return mealData
@@ -46,7 +46,7 @@ class MealUtils {
                 calendar.set(Calendar.DAY_OF_MONTH , it)
                 conv.add(Meal(day = calendar.time, breakfast = mealList[it]?.breakfast ?:arrayListOf(), lunch = mealList[it]?.lunch ?:arrayListOf(), dinner = mealList[it]?.dinner ?:arrayListOf()))
             }
-            NeisDatabase.getInstance(context)?.mealDao()?.insertMeals(*conv.toTypedArray())
+            AppDatabase.getInstance(context)?.mealDao()?.insertMeals(*conv.toTypedArray())
         }
     }
 }

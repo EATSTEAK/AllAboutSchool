@@ -15,4 +15,13 @@ class MealConverter {
         val listType = object: TypeToken<List<MealMenu>>() {}.type
         return Gson().fromJson(json, listType)
     }
+
+    @TypeConverter
+    fun fromAllergyList(list: List<MealMenu.AllergyInfo>): String = Gson().toJson(list)
+
+    @TypeConverter
+    fun toAllergyList(json: String): List<MealMenu.AllergyInfo> {
+        val listType = object: TypeToken<List<MealMenu.AllergyInfo>>() {}.type
+        return Gson().fromJson(json, listType)
+    }
 }
